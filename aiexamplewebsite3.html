@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เรียนรู้คำสั่ง Python พื้นฐาน</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #64748b;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: #475569;
+            margin-bottom: 1rem;
+        }
+
+        .code-box {
+            position: relative;
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            margin-bottom: 1rem;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #334155;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .output-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .output-box span {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🐍 สรุปคำสั่งพื้นฐาน Python</h1>
+            <p>รวมตัวอย่างโค้ดสั้นๆ เข้าใจง่าย พร้อมปุ่มคัดลอกเพื่อนำไปใช้งาน</p>
+        </header>
+
+        <!-- หมวดที่ 1: Output & Input -->
+        <div class="card">
+            <h2>1. Output & Input (การแสดงผลและรับค่า)</h2>
+            <p class="description">ใช้คำสั่ง <code>print()</code> สำหรับแสดงข้อความออกทางหน้าจอ และ <code>input()</code> สำหรับรับค่าที่ผู้ใช้พิมพ์เข้ามา</p>
+            <div class="code-box">
+<button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button>
+# การแสดงผล (Output)
+print("สวัสดี, ชาวโลก!")
+
+# การรับค่า (Input)
+name = input("คุณชื่ออะไร: ")
+print("ยินดีที่ได้รู้จัก, " + name)</div>
+            <div class="output-box"><span>ผลลัพธ์ตัวอย่าง:</span> สวัสดี, ชาวโลก! / (โปรแกรมรอรับค่าพิมพ์ชื่อ)</div>
+        </div>
+
+        <!-- หมวดที่ 2: Function -->
+        <div class="card">
+            <h2>2. Function (ฟังก์ชันและการสร้างคำสั่งย่อย)</h2>
+            <p class="description">ใช้คำสั่ง <code>def</code> เพื่อสร้างฟังก์ชันสำหรับเก็บชุดคำสั่งไว้เรียกใช้งานซ้ำๆ ได้ และสามารถส่งค่า (Arguments) เข้าไปคำนวณได้</p>
+            <div class="code-box">
+<button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button>
+# ประกาศฟังก์ชันสำหรับทักทาย
+def say_hello(name):
+    return f"สวัสดีคุณ {name}!"
+
+# เรียกใช้งานฟังก์ชัน
+message = say_hello("สมชาย")
+print(message)</div>
+            <div class="output-box"><span>ผลลัพธ์ตัวอย่าง:</span> สวัสดีคุณ สมชาย!</div>
+        </div>
+
+        <!-- หมวดที่ 3: Condition -->
+        <div class="card">
+            <h2>3. Condition (เงื่อนไข if-elif-else)</h2>
+            <p class="description">ใช้ตรวจสอบเงื่อนไขทางเลือก ว่าถ้าเป็นจริงให้ทำชุดคำสั่งนี้ ถ้าไม่ใช่ให้ไปเช็คเงื่อนไขอื่นหรือทำคำสั่งสำรอง</p>
+            <div class="code-box">
+<button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button>
+score = 75
+
+if score >= 80:
+    print("ได้เกรด A")
+elif score >= 50:
+    print("ผ่าน (Pass)")
+else:
+    print("ไม่ผ่าน (Fail)")</div>
+            <div class="output-box"><span>ผลลัพธ์ตัวอย่าง:</span> ผ่าน (Pass)</div>
+        </div>
+
+        <!-- หมวดที่ 4: Loop -->
+        <div class="card">
+            <h2>4. Loop (การวนซ้ำ for และ while)</h2>
+            <p class="description">ใช้สำหรับสั่งให้โปรแกรมทำงานซ้ำๆ หลายรอบโดยไม่ต้องเขียนโค้ดเดิมซ้ำๆ เช่น การใช้ <code>for</code> วนลูปตามจำนวนครั้งที่กำหนด</p>
+            <div class="code-box">
+<button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button>
+# วนลูปนับเลข 1 ถึง 3 ด้วย for loop
+for i in range(1, 4):
+    print(f"รอบที่: {i}")</div>
+            <div class="output-box"><span>ผลลัพธ์ตัวอย่าง:</span><br>รอบที่: 1<br>รอบที่: 2<br>รอบที่: 3</div>
+        </div>
+
+    </div>
+
+    <script>
+        // ฟังก์ชันสำหรับกดปุ่มคัดลอกโค้ดในแต่ละบล็อก
+        function copyCode(button) {
+            const codeBox = button.parentElement;
+            // ดึงข้อความโค้ดโดยไม่เอาปุ่มคัดลอกติดไป
+            const codeText = codeBox.innerText.replace("คัดลอกโค้ด", "").trim();
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                button.innerText = "คัดลอกแล้ว! ✓";
+                setTimeout(() => {
+                    button.innerText = "คัดลอกโค้ด";
+                }, 2000);
+            }).catch(err => {
+                console.error("ไม่สามารถคัดลอกได้: ", err);
+            });
+        }
+    </script>
+
+</body>
+</html>

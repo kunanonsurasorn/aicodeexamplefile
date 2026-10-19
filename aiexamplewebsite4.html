@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Wiki</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --primary-color: #2563eb;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* แถบเมนูด้านซ้าย (Sidebar) */
+        aside {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: inf;
+            flex-direction: column;
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+
+        .wiki-logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+
+        .nav-links li {
+            margin-bottom: 4px;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: #eff6ff;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* พื้นที่เนื้อหาหลักตรงกลาง (Main Content) */
+        main {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+            background-color: var(--bg-color);
+        }
+
+        .article-container {
+            max-width: 800px;
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: #334155;
+            margin-top: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        p {
+            line-height: 1.7;
+            color: #475569;
+        }
+
+        .info-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95krem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar สำหรับเลือกหัวข้อบทความ -->
+    <aside>
+        <div class="wiki-logo">
+            📚 MyKnowledge Wiki
+        </div>
+        
+        <div class="nav-section-title">หมวดหมู่เนื้อหา</div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="loadPage('python')" id="link-python" class="active">ภาษา Python เบื้องต้น</a></li>
+            <li><a href="#" onclick="loadPage('htmlcss')" id="link-htmlcss">โครงสร้างเว็บ (HTML/CSS)</a></li>
+            <li><a href="#" onclick="loadPage('git')" id="link-git">การใช้งาน Git & GitHub</a></li>
+        </ul>
+
+        <div class="nav-section-title">เกี่ยวกับระบบ</div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="loadPage('about')" id="link-about">เกี่ยวกับ Wiki นี้</a></li>
+        </ul>
+    </aside>
+
+    <!-- พื้นที่แสดงบทความ -->
+    <main>
+        <div class="article-container" id="content-area">
+            <!-- เนื้อหาจะถูกสลับเปลี่ยนมาแสดงที่นี่ด้วย JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        // ฐานข้อมูลบทความจำลอง (เปรียบเสมือนหน้าเพจต่างๆ ใน Wiki)
+        const pages = {
+            python: {
+                title: "ภาษา Python เบื้องต้น",
+                content: `
+                    <p>Python เป็นภาษาสะสมคำสั่งระดับสูงที่ได้รับความนิยมมาก เนื่องจากโครงสร้างไวยากรณ์ (Syntax) อ่านง่าย ใกล้เคียงกับภาษาอังกฤษ ทำให้ผู้เริ่มต้นเรียนรู้ได้รวดเร็ว</p>
+                    <h2>จุดเด่นสำคัญ</h2>
+                    <p>เขียนโค้ดสั้นแต่ได้ผลลัพธ์มาก มีไลบรารีสนับสนุนครอบคลุมทั้งงานเว็บ, ปัญญาประดิษฐ์ (AI), และการวิเคราะห์ข้อมูล</p>
+                    <div class="info-box"><strong>เกร็ดความรู้:</strong> ชื่อภาษา Python ไม่ได้ตั้งตามงูหลาม แต่ตั้งตามคณะตลกอังกฤษที่ชื่อว่า Monty Python ต่างหาก!</div>
+                `
+            },
+            htmlcss: {
+                title: "โครงสร้างเว็บ (HTML/CSS)",
+                content: `
+                    <p>การสร้างหน้าเว็บไซต์พื้นฐานจะต้องอาศัยภาษหลัก 2 ตัวทำงานร่วมกัน เปรียบเสมือนการสร้างบ้าน</p>
+                    <h2>องค์ประกอบหลัก</h2>
+                    <p><strong>HTML:</strong> เปรียบเสมือนโครงสร้างกระดูกและอิฐปูนของบ้าน ทำหน้าที่จัดวางข้อความ รูปภาพ และปุ่มกดต่างๆ</p>
+                    <p><strong>CSS:</strong> เปรียบเสมือนการตกแต่ง ทาสี จัดวางเฟอร์นิเจอร์ให้บ้านสวยงามน่าอยู่</p>
+                `
+            },
+            git: {
+                title: "การใช้งาน Git & GitHub",
+                content: `
+                    <p>Git คือระบบควบคุมเวอร์ชัน (Version Control) ที่ช่วยให้เราบันทึกประวัติการแก้ไขโค้ด สามารถย้อนเวลากลับไปดูเวอร์ชันเก่าได้ และช่วยให้ทำงานร่วมกันหลายคนได้ราบรื่น</p>
+                    <h2>GitHub คืออะไร?</h2>
+                    <p>GitHub คือเว็บไซต์คลาวด์ที่ทำหน้าที่เก็บรวบรวมโปรเจกต์ Git ไว้บนออนไลน์ เพื่อให้เราแชร์โค้ดหรือสำรองข้อมูลไว้บนอินเทอร์เน็ตได้</p>
+                `
+            },
+            about: {
+                title: "เกี่ยวกับ Wiki นี้",
+                content: `
+                    <p>นี่คือตัวอย่างเว็บสารานุกรมส่วนตัว (Personal Wiki) แบบ Static Web ขนาดเบา ที่สร้างขึ้นเพื่อรวบรวมบันทึกความรู้ต่างๆ</p>
+                    <h2>ข้อดีของระบบ</h2>
+                    <p>สามารถกดเปลี่ยนหัวข้ออ่านบทความได้อย่างรวดเร็วโดยไม่ต้องเปลี่ยนหน้าจอไปไหน และปรับแต่งเนื้อหาเพิ่มได้ง่ายๆ ผ่านชุดข้อมูล JavaScript ด้านใน</p>
+                `
+            }
+        };
+
+        // ฟังก์ชันสำหรับเปลี่ยนหน้าบทความ
+        function loadPage(pageKey) {
+            const data = pages[pageKey];
+            if (!data) return;
+
+            // 1. เปลี่ยนเนื้อหาในกล่องบทความ
+            document.getElementById("content-area").innerHTML = `
+                <h1>${data.title}</h1>
+                ${data.content}
+            `;
+
+            // 2. จัดการActiveสถานะสีของเมนูด้านซ้าย
+            document.querySelectorAll('.nav-links a').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(`link-${pageKey}`).classList.add('active');
+        }
+
+        // โหลดหน้าแรก (Python) ทันทีเมื่อเปิดเว็บ
+        loadPage('python');
+    </script>
+
+</body>
+</html>

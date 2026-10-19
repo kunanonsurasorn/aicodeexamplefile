@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>แบบทดสอบแบบหน้าเดียว (มีปุ่มทำใหม่)</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; padding: 20px; }
+        .quiz-box { background: #fff; max-width: 500px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .question-item { margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; }
+        button { background: #4f46e5; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 10px; }
+        button:hover { background: #4338ca; }
+        #reset-btn { background: #6b7280; display: none; } /* ซ่อนปุ่มรีเซ็ตไว้ก่อน จนกว่าจะกดส่งคำตอบ */
+        #reset-btn:hover { background: #4b5563; }
+        #result { margin-top: 15px; font-weight: bold; text-align: center; font-size: 1.1rem; color: #1f2937; }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-box">
+        <h2>แบบทดสอบความรู้ (หน้าเดียว - ทำใหม่ได้)</h2>
+        
+        <form id="quiz-form">
+            <!-- ข้อที่ 1 -->
+            <div class="question-item">
+                <p><b>1. ดวงอาทิตย์ขึ้นทางทิศใด?</b></p>
+                <label><input type="radio" name="q1" value="wrong"> ทิศเหนือ</label><br>
+                <label><input type="radio" name="q1" value="correct"> ทิศตะวันออก</label><br>
+                <label><input type="radio" name="q1" value="wrong"> ทิศตะวันตก</label>
+            </div>
+
+            <!-- ข้อที่ 2 -->
+            <div class="question-item">
+                <p><b>2. ข้อใดคือภาษาทำโครงสร้างเว็บ?</b></p>
+                <label><input type="radio" name="q2" value="wrong"> Python</label><br>
+                <label><input type="radio" name="q2" value="correct"> HTML</label><br>
+                <label><input type="radio" name="q2" value="wrong"> SQL</label>
+            </div>
+        </form>
+
+        <button type="button" id="submit-btn" onclick="checkScore()">ส่งคำตอบ</button>
+        <button type="button" id="reset-btn" onclick="resetQuiz()">ทำใหม่อีกครั้ง</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function checkScore() {
+            let score = 0;
+            let totalQuestions = 2;
+            
+            // เช็คข้อ 1
+            const q1Answer = document.querySelector('input[name="q1"]:checked');
+            if (q1Answer && q1Answer.value === "correct") {
+                score++;
+            }
+
+            // เช็คข้อ 2
+            const q2Answer = document.querySelector('input[name="q2"]:checked');
+            if (q2Answer && q2Answer.value === "correct") {
+                score++;
+            }
+
+            // แสดงผลคะแนน
+            document.getElementById("result").innerText = `คุณได้คะแนน ${score} จาก ${totalQuestions} ข้อ`;
+
+            // ปิดการติ๊กเลือกช้อยส์ชั่วคราวหลังกดส่ง (ไม่ให้เปลี่ยนคำตอบตอนรู้ผลแล้ว)
+            const allInputs = document.querySelectorAll('input[type="radio"]');
+            allInputs.forEach(input => input.disabled = true);
+
+            // สลับปุ่ม: ซ่อนปุ่มส่งคำตอบ แล้วแสดงปุ่ม "ทำใหม่อีกครั้ง" ขึ้นมา
+            document.getElementById("submit-btn").style.display = "none";
+            document.getElementById("reset-btn").style.display = "block";
+        }
+
+        function resetQuiz() {
+            // 1. เคลียร์ค่าที่ติ๊กไว้ทั้งหมดในฟอร์ม
+            document.getElementById("quiz-form").reset();
+
+            // 2. เปิดการใช้งานปุ่ม radio ทุกตัวกลับมาให้กดได้เหมือนเดิม
+            const allInputs = document.querySelectorAll('input[type="radio"]');
+            allInputs.forEach(input => input.disabled = false);
+
+            // 3. ล้างข้อความผลคะแนนออก
+            document.getElementById("result").innerText = "";
+
+            // 4. สลับปุ่มกลับ: แสดงปุ่ม "ส่งคำตอบ" และซ่อนปุ่ม "ทำใหม่อีกครั้ง"
+            document.getElementById("submit-btn").style.display = "block";
+            document.getElementById("reset-btn").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>

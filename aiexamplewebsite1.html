@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบความรู้รอบตัว</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .question {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .btn-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: #f9fafb;
+            border: 2px solid #e5e7eb;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: #e0e7ff;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .btn.correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+
+        .btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+
+        #action-btn {
+            margin-top: 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            display: none;
+        }
+
+        #action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="quiz">
+            <h2 id="progress">คำถามที่ 1 จาก 3</h2>
+            <div class="question" id="question">กำลังโหลดคำถาม...</div>
+            <div class="btn-grid" id="answer-buttons"></div>
+            <button id="action-btn">ข้อถัดไป</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "ข้อใดคือภาษาโปรแกรมมิ่งที่ใช้สำหรับโครงสร้างเว็บ (HTML/CSS/JS)?",
+                answers: [
+                    { text: "Python", correct: false },
+                    { text: "HTML", correct: true },
+                    { text: "SQL", correct: false },
+                    { text: "C++", correct: false }
+                ]
+            },
+            {
+                question: "ดวงอาทิตย์ขึ้นทางทิศใด?",
+                answers: [
+                    { text: "ทิศเหนือ", correct: false },
+                    { text: "ทิศใต้", correct: false },
+                    { text: "ทิศตะวันออก", correct: true },
+                    { text: "ทิศตะวันตก", correct: false }
+                ]
+            },
+            {
+                question: "ประเทศไทยมีกี่ฤดู (ตามประกาศทางการหลัก)?",
+                answers: [
+                    { text: "2 ฤดู", correct: false },
+                    { text: "3 ฤดู", correct: true },
+                    { text: "4 ฤดู", correct: false },
+                    { text: "1 ฤดู", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+        const actionButton = document.getElementById("action-btn");
+        const progressElement = document.getElementById("progress");
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            progressElement.innerText = `คำถามที่ ${currentQuestionIndex + 1} จาก ${questions.length}`;
+            questionElement.innerText = currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                button.onclick = () => selectAnswer(button, answer.correct);
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            actionButton.style.display = "none";
+            // ล้าง event เก่าของปุ่ม action-btn ออกทั้งหมด
+            actionButton.onclick = null;
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(selectedButton, isCorrect) {
+            // ปิดการคลิกทุกปุ่มหลังเลือก
+            Array.from(answerButtonsElement.children).forEach(button => {
+                button.disabled = true;
+                const matchAnswer = questions[currentQuestionIndex].answers.find(a => a.text === button.innerText);
+                if (matchAnswer && matchAnswer.correct) {
+                    button.classList.add("correct");
+                }
+            });
+
+            if (isCorrect) {
+                score++;
+            } else {
+                selectedButton.classList.add("wrong");
+            }
+
+            // เช็คว่าเป็นข้อสุดท้ายหรือยัง
+            if (currentQuestionIndex < questions.length - 1) {
+                actionButton.innerText = "ข้อถัดไป";
+                actionButton.onclick = () => {
+                    currentQuestionIndex++;
+                    showQuestion();
+                };
+            } else {
+                actionButton.innerText = "ดูผลคะแนน";
+                actionButton.onclick = showScore;
+            }
+            actionButton.style.display = "block";
+        }
+
+        function showScore() {
+            resetState();
+            progressElement.innerText = "สรุปผลคะแนน";
+            questionElement.innerHTML = `คุณตอบถูก ${score} จาก ${questions.length} ข้อ! 🎉`;
+            
+            actionButton.innerText = "เล่นใหม่อีกครั้ง";
+            actionButton.onclick = startQuiz; // พอกดจะรีเซ็ตเกมใหม่ทั้งหมดได้อย่างถูกต้อง
+            actionButton.style.display = "block";
+        }
+
+        // เริ่มเกมครั้งแรก
+        startQuiz();
+    </script>
+</body>
+</html>

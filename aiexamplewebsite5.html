@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CJK Language Quiz</title>
+    <!-- โหลด Tailwind CSS ผ่าน CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 min-h-screen flex items-center justify-center p-4 font-sans text-slate-100">
+
+    <div class="w-full max-w-md bg-slate-800/80 backdrop-blur-md border border-slate-700/50 shadow-2xl rounded-2xl p-6 sm:p-8">
+        
+        <!-- 1. หน้าเลือกภาษา (Language Selection Screen) -->
+        <div id="lang-screen" class="space-y-6">
+            <div class="text-center space-y-2">
+                <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                    CJK Vocabulary Quiz
+                </h1>
+                <p class="text-slate-400 text-sm">ทดสอบคําศัพท์ภาษาจีน ญี่ปุ่น และเกาหลี</p>
+            </div>
+            
+            <div class="space-y-3 pt-4">
+                <button onclick="selectLanguage('zh')" class="w-full py-3 px-4 bg-slate-700/60 hover:bg-blue-600 border border-slate-600 rounded-xl font-medium transition-all duration-200 flex items-center justify-between group">
+                    <span class="flex items-center gap-3">
+                        <span class="text-2xl">🇨🇳</span> 
+                        <span class="text-lg">ภาษาจีน (Mandarin)</span>
+                    </span>
+                    <span class="text-slate-400 group-hover:text-white">&rarr;</span>
+                </button>
+
+                <button onclick="selectLanguage('ja')" class="w-full py-3 px-4 bg-slate-700/60 hover:bg-indigo-600 border border-slate-600 rounded-xl font-medium transition-all duration-200 flex items-center justify-between group">
+                    <span class="flex items-center gap-3">
+                        <span class="text-2xl">🇯🇵</span> 
+                        <span class="text-lg">ภาษาญี่ปุ่น (Japanese)</span>
+                    </span>
+                    <span class="text-slate-400 group-hover:text-white">&rarr;</span>
+                </button>
+
+                <button onclick="selectLanguage('ko')" class="w-full py-3 px-4 bg-slate-700/60 hover:bg-violet-600 border border-slate-600 rounded-xl font-medium transition-all duration-200 flex items-center justify-between group">
+                    <span class="flex items-center gap-3">
+                        <span class="text-2xl">🇰🇷</span> 
+                        <span class="text-lg">ภาษาเกาหลี (Korean)</span>
+                    </span>
+                    <span class="text-slate-400 group-hover:text-white">&rarr;</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. หน้าทำควิซ (Quiz Screen) - ซ่อนไว้ก่อน -->
+        <div id="quiz-screen" class="hidden space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                <button onclick="backToHome()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-slate-300 transition">
+                    &larr; เปลี่ยนภาษา
+                </button>
+                <span id="question-progress" class="text-sm font-semibold text-indigo-400">ข้อที่ 1 / 5</span>
+            </div>
+
+            <div class="space-y-2">
+                <h2 id="question-text" class="text-2xl font-bold text-white text-center py-4">คำถามจะแสดงที่นี่</h2>
+            </div>
+
+            <div id="options-container" class="space-y-3">
+                <!-- ปุ่มตัวเลือกจะถูกสร้างด้วย JavaScript -->
+            </div>
+        </div>
+
+        <!-- 3. หน้าสรุปผลคะแนน (Result Screen) - ซ่อนไว้ก่อน -->
+        <div id="result-screen" class="hidden text-center space-y-6 py-4">
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-white">สรุปผลคะแนน</h2>
+                <p class="text-slate-400 text-sm">คุณทำแบบทดสอบครบแล้ว!</p>
+            </div>
+            
+            <div class="bg-slate-900/60 border border-slate-700 rounded-2xl p-6">
+                <p class="text-slate-400 text-sm mb-1">คะแนนที่คุณทำได้</p>
+                <p id="score-display" class="text-5xl font-black text-indigo-400">0 / 5</p>
+            </div>
+
+            <button onclick="backToHome()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
+                กลับหน้าหลัก
+            </button>
+        </div>
+
+    </div>
+
+    <!-- JavaScript ควบคุมระบบทั้งหมด -->
+    <script>
+        // ฐานข้อมูลคำศัพท์ 3 ภาษา (ภาษาละ 5 ข้อ)
+        const quizData = {
+            zh: [
+                { q: "谢谢 (Xièxiè)", options: ["สวัสดี", "ขอโทษ", "ขอบคุณ", "ลาก่อน"], answer: 2 },
+                { q: "再见 (Zàijiàn)", options: ["ลาก่อน", "ยินดีต้อนรับ", "ขอบคุณ", "อรุณสวัสดิ์"], answer: 0 },
+                { q: "你好 (Nǐ hǎo)", options: ["สบายดีไหม", "สวัสดี", "โชคดี", "ลาก่อน"], answer: 1 },
+                { q: "对不起 (Duìbuqǐ)", options: ["ไม่เป็นไร", "ขอบคุณ", "ขอโทษ", "ยินดี"], answer: 2 },
+                { q: "苹果 (Píngguǒ)", options: ["กล้วย", "ส้ม", "แอปเปิ้ล", "แตงโม"], answer: 2 }
+            ],
+            ja: [
+                { q: "猫 (Neko)", options: ["หมา", "แมว", "นก", "ปลา"], answer: 1 },
+                { q: "ありがとう (Arigatou)", options: ["ขอโทษ", "ขอบคุณ", "สวัสดี", "ลาก่อน"], answer: 1 },
+                { q: "水 (Mizu)", options: ["ไฟ", "ลม", "น้ำ", "ดิน"], answer: 2 },
+                { q: "桜 (Sakura)", options: ["ดอกซากุระ", "ดอกบัว", "ดอกกุหลาบ", "ดอกมะลิ"], answer: 0 },
+                { q: "犬 (Inu)", options: ["แมว", "นก", "หมู", "สุนัข"], answer: 3 }
+            ],
+            ko: [
+                { q: "감사합니다 (Gamsahamnida)", options: ["ขอบคุณ", "ขอโทษ", "สวัสดี", "ลาก่อน"], answer: 0 },
+                { q: "안녕하세요 (Annyeonghaseyo)", options: ["ราตรีสวัสดิ์", "สวัสดี", "ลาก่อน", "ยินดีที่ได้รู้จัก"], answer: 1 },
+                { q: "물 (Mul)", options: ["น้ำ", "ไฟ", "ข้าว", "นม"], answer: 0 },
+                { q: "고양이 (Goyangi)", options: ["เสือ", "สุนัข", "แมว", "กระต่าย"], answer: 2 },
+                { q: "사랑해 (Saranghae)", options: ["เกลียด", "คิดถึง", "รักนะ", "ขอบคุณ"], answer: 2 }
+            ]
+        };
+
+        let currentLang = '';
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // อ้างอิง Element ต่างๆ ในหน้าเว็บ
+        const langScreen = document.getElementById('lang-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const questionProgress = document.getElementById('question-progress');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const scoreDisplay = document.getElementById('score-display');
+
+        // ฟังก์ชันเมื่อกดเลือกภาษา
+        function selectLanguage(lang) {
+            currentLang = lang;
+            currentQuestionIndex = 0;
+            score = 0;
+
+            // สลับหน้าจอจากเลือกภาษา -> ไปหน้าควิซ
+            langScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            resultScreen.classList.add('hidden');
+
+            loadQuestion();
+        }
+
+        // ฟังก์ชันโหลดคำถามแต่ละข้อ
+        function loadQuestion() {
+            const currentQuizList = quizData[currentLang];
+            const qData = currentQuizList[currentQuestionIndex];
+
+            // อัปเดตข้อความความคืบหน้าและโจทย์
+            questionProgress.innerText = `ข้อที่ ${currentQuestionIndex + 1} / ${currentQuizList.length}`;
+            questionText.innerText = qData.q;
+
+            // เคลียร์ปุ่มตัวเลือกเก่า
+            optionsContainer.innerHTML = '';
+
+            // สร้างปุ่มตัวเลือกใหม่
+            qData.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = "w-full py-3 px-4 bg-slate-700/60 hover:bg-indigo-600 border border-slate-600 rounded-xl font-medium transition text-left";
+                button.innerText = `${index + 1}. ${option}`;
+                button.onclick = () => checkAnswer(index, qData.answer);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // ฟังก์ชันตรวจสอบคำตอบ
+        function checkAnswer(selectedIndex, correctIndex) {
+            const currentQuizList = quizData[currentLang];
+
+            if (selectedIndex === correctIndex) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+
+            // เช็คว่าหมดข้อหรือยัง
+            if (currentQuestionIndex < currentQuizList.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // ฟังก์ชันแสดงผลคะแนนตอนท้าย
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            scoreDisplay.innerText = `${score} / ${quizData[currentLang].length}`;
+        }
+
+        // ฟังก์ชันกลับสู่หน้าหลัก
+        function backToHome() {
+            langScreen.classList.remove('hidden');
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
