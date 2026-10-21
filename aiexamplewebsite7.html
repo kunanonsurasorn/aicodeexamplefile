@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot with Export TXT</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .chat-container { width: 350px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
+        .chat-header { background: #0084ff; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px; }
+        .header-btns { display: flex; gap: 5px; }
+        .btn-action { background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 11px; }
+        .btn-action:hover { background: rgba(255,255,255,0.3); }
+        .chat-box { height: 300px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 75%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; }
+        .user-message { background: #0084ff; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .bot-message { background: #e4e6eb; color: black; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-input-area { display: flex; padding: 10px; border-top: 1px solid #ddd; background: #fff; }
+        .chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; }
+        .chat-input-area button { background: #0084ff; color: white; border: none; padding: 0 15px; margin-left: 8px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>Chatbot บันทึกเป็น TXT 🤖</span>
+            <div class="header-btns">
+                <button class="btn-action" onclick="exportToTxt()">📥 บันทึก TXT</button>
+                <button class="btn-action" onclick="clearChatHistory()" style="background: #ff4d4d;">🗑️ ล้าง</button>
+            </div>
+        </div>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="พิมพ์ข้อความที่นี่..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">ส่ง</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            loadChatHistory();
+        };
+
+        function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const userText = inputField.value.trim();
+            if (userText === "") return;
+
+            appendMessage(userText, 'user-message');
+            inputField.value = "";
+            saveToLocalStorage(userText, '👤 คุณ');
+
+            setTimeout(() => {
+                let botReply = getBotResponse(userText);
+                appendMessage(botReply, 'bot-message');
+                saveToLocalStorage(botReply, '🤖 บอท');
+            }, 500);
+        }
+
+        function appendMessage(text, className) {
+            const chatBox = document.getElementById('chatBox');
+            let msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            msgDiv.textContent = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function getBotResponse(input) {
+            let text = input.toLowerCase();
+            if (text.includes("สวัสดี") || text.includes("hi")) {
+                return "สวัสดีครับ! กดปุ่ม 'บันทึก TXT' ด้านบนเพื่อเซฟบทสนทนาเก็บไว้ในเครื่องได้เลยนะ";
+            } else if (text.includes("ชื่ออะไร")) {
+                return "ผมเป็นบอทจำลองที่แปลงบทสนทนาเป็นไฟล์ TXT ได้ครับ!";
+            } else {
+                return "ได้รับข้อความ \"" + input + "\" เรียบร้อยครับ ลองกดเซฟไฟล์ดูสิ!";
+            }
+        }
+
+        // --- ระบบบันทึกและจัดการข้อมูล ---
+
+        function saveToLocalStorage(text, sender) {
+            let history = JSON.parse(localStorage.getItem('chatTxtHistory')) || [];
+            let timeNow = new Date().toLocaleTimeString();
+            history.push({ text: text, sender: sender, time: timeNow });
+            localStorage.setItem('chatTxtHistory', JSON.stringify(history));
+        }
+
+        function loadChatHistory() {
+            let history = JSON.parse(localStorage.getItem('chatTxtHistory')) || [];
+            if (history.length === 0) {
+                let welcomeText = "สวัสดีครับ! พิมพ์คุยกันแล้วกดปุ่ม 'บันทึก TXT' ข้างบนเพื่อดาวน์โหลดเก็บไว้ได้เลย";
+                appendMessage(welcomeText, 'bot-message');
+                saveToLocalStorage(welcomeText, '🤖 บอท');
+                return;
+            }
+            history.forEach(item => {
+                let className = (item.sender === '👤 คุณ') ? 'user-message' : 'bot-message';
+                appendMessage(item.text, className);
+            });
+        }
+
+        // ฟังก์ชันสำคัญ: แปลงประวัติแชทให้เป็นไฟล์ .txt แล้วดาวน์โหลด
+        function exportToTxt() {
+            let history = JSON.parse(localStorage.getItem('chatTxtHistory')) || [];
+            if (history.length === 0) {
+                alert("ยังไม่มีประวัติการคุยให้บันทึกครับ!");
+                return;
+            }
+
+            // จัดรูปแบบข้อความที่จะใส่ในไฟล์ txt
+            let fileContent = "=== ประวัติการสนทนา Chatbot ===\n\n";
+            history.forEach(item => {
+                fileContent += `[${item.time}] ${item.sender}: ${item.text}\n`;
+            });
+
+            // สร้าง Blob สำหรับเป็นไฟล์จำลอง
+            let blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+
+            // สร้างปุ่มดาวน์โหลดชั่วคราวแล้วสั่งคลิกอัตโนมัติ
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'chat-history.txt'; // ชื่อไฟล์ที่จะดาวน์โหลด
+            document.body.appendChild(a);
+            a.click();
+            
+            // ลบลิงก์ทิ้งหลังดาวน์โหลดเสร็จ
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearChatHistory() {
+            localStorage.removeItem('chatTxtHistory');
+            document.getElementById('chatBox').innerHTML = "";
+            let welcomeText = "ล้างประวัติเรียบร้อย เริ่มต้นใหม่ได้เลยครับ";
+            appendMessage(welcomeText, 'bot-message');
+            saveToLocalStorage(welcomeText, '🤖 บอท');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+
+</body>
+</html>

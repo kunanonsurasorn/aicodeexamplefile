@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple JS Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 350px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #0084ff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .user-message {
+            background: #0084ff;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .bot-message {
+            background: #e4e6eb;
+            color: black;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        .chat-input-area button {
+            background: #0084ff;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            margin-left: 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .chat-input-area button:hover {
+            background: #006dd7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">My Simple Chatbot 🤖</div>
+        <div class="chat-box" id="chatBox">
+            <div class="message bot-message">สวัสดีครับ! มีอะไรให้ผมช่วยไหมครับ ลองพิมพ์ทักทาย หรือถามว่า "ทำอะไรได้บ้าง" ดูสิครับ</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="พิมพ์ข้อความที่นี่..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">ส่ง</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const userText = inputField.value.trim();
+
+            if (userText === "") return; // ถ้าไม่พิมพ์อะไรเลย ให้ข้าม
+
+            // 1. แสดงข้อความฝั่ง User
+            let userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message user-message';
+            userMsgDiv.textContent = userText;
+            chatBox.appendChild(userMsgDiv);
+
+            // เคลียร์ช่องพิมพ์
+            inputField.value = "";
+
+            // เลื่อนกล่องแชทลงล่างสุด
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. จำลองเวลาบอทคิดเล็กน้อย (0.5 วินาที) แล้วค่อยตอบ
+            setTimeout(() => {
+                let botReply = getBotResponse(userText);
+
+                let botMsgDiv = document.createElement('div');
+                botMsgDiv.className = 'message bot-message';
+                botMsgDiv.textContent = botReply;
+                chatBox.appendChild(botMsgDiv);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 500);
+        }
+
+        // หัวใจสำคัญ: ระบบเงื่อนไข if-else ตรวจจับคำพูด
+        function getBotResponse(input) {
+            let text = input.toLowerCase(); // แปลงเป็นพิมพ์เล็กทั้งหมดเพื่อกันตัวสะกดผิดเพี้ยน
+
+            if (text.includes("สวัสดี") || text.includes("hi") || text.includes("hello")) {
+                return "สวัสดีครับ! ยินดีที่ได้คุยกันนะ มีอะไรให้ช่วยไหม?";
+            } 
+            else if (text.includes("ทำอะไรได้บ้าง") || text.includes("ช่วยอะไร")) {
+                return "ผมเป็นบอทจำลองครับ สามารถตอบคำถามง่ายๆ ตามเงื่อนไขที่ถูกเขียนไว้ได้ เช่น ลองทักทาย, ถามชื่อ, หรือถามเวลาดูครับ!";
+            } 
+            else if (text.includes("ชื่ออะไร") || text.includes("นายชื่อ")) {
+                return "ผมคือบอทน้อยเวอร์ชัน HTML/JS ครับ ไม่มีชื่อเฉพาะเจาะจง 😅";
+            } 
+            else if (text.includes("เวลา") || text.includes("กี่โมง")) {
+                let now = new Date();
+                return "ตอนนี้เวลาประมาณ " + now.toLocaleTimeString() + " ครับ";
+            } 
+            else {
+                return "อืม... ผมยังไม่เข้าใจคำว่า \"" + input + "\" ครับ ลองถามคำถามอื่นดูนะ!";
+            }
+        }
+
+        // ให้กด Enter บนคีย์บอร์ดแล้วส่งข้อความได้เลย
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+
+</body>
+</html>
